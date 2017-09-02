@@ -6,38 +6,42 @@
         <div class="field">
           <p class="control has-icons-left">
             <input class="input" placeholder="Username"
+              :class="{ 'is-danger': usernameError != null }"
               v-model="username"
-              v-on:keydown="checkInput"
+              @keyup="checkUsername"
             >
             <span class="icon is-small is-left">
               <i class="fa fa-user"></i>
             </span>
           </p>
+          <p class="help is-danger">{{ usernameError }}</p>          
         </div>
         <div class="field">
           <p class="control has-icons-left">
             <input class="input" type="password" placeholder="Password"
+              :class="{ 'is-danger': passwordError != null }"
               v-model="password"
-              v-on:keydown="checkInput"
+              @keyup="checkPassword"
             >
             <span class="icon is-small is-left">
               <i class="fa fa-lock"></i>
             </span>
           </p>
-          <p class="help is-danger">{{ error }}</p>
+          <p class="help is-danger">{{ passwordError }}</p>          
+        </div>
+        <div class="notification is-danger" v-if="error">
+          {{ error }}
         </div>
         <div class="field">
           <div class="control">
-            <button class="button is-primary"
+            <button class="button is-primary" 
               :class="{ 'is-loading': isLoading }"
+              :disabled="hasError"
               @click="signIn()"
             >
-              Submit
+              Login
             </button>
-            <button class="button is-link"
-              :disabled="isLoading"
-              @click="goBack()"
-            >
+            <button class="button is-link" :disabled="isLoading" @click="goBack()">
               Cancel
             </button>
           </div>
@@ -49,16 +53,21 @@
 
 <script>
 import { mapActions } from 'vuex'
-import _ from 'lodash'
 
 export default {
   data () {
     return {
       username: '',
       password: '',
+      usernameError: null,
+      passwordError: null,
       error: null,
-      isLoading: false,
-      forbiddenCharacters: [ '/', '\\', ',', '.', '^' ]
+      isLoading: false
+    }
+  },
+  computed: {
+    hasError () {
+      return this.usernameError != null || this.passwordError != null
     }
   },
   methods: {
@@ -66,10 +75,13 @@ export default {
       'logIn'
     ]),
     signIn () {
-      this.error = null
-      this.isLoading = true
-      this.logIn({ username: this.username, password: this.password })
-        .then(response => {
+      if (!this.hasError) {
+        this.error = null
+        this.isLoading = true
+        this.logIn({
+          username: this.username,
+          password: this.password
+        }).then(response => {
           this.isLoading = false
           if (response.success && !response.errorMsg) {
             this.$router.push('/private')
@@ -77,11 +89,23 @@ export default {
             this.error = response.errorMsg
           }
         })
+      }
     },
-    checkInput (e) {
-      var index = _.findIndex(this.forbiddenCharacters, c => { return c === e.key })
-      if (index >= 0) {
-        e.preventDefault()
+    checkInput (string) {
+      return string.search(/[/\\^,.]/) < 0
+    },
+    checkUsername () {
+      if (!this.checkInput(this.username)) {
+        this.usernameError = 'Username can not contain [\\ / , . ^] characters'
+      } else {
+        this.usernameError = null
+      }
+    },
+    checkPassword () {
+      if (!this.checkInput(this.password)) {
+        this.passwordError = 'Password can not contain [\\ / , . ^] characters'
+      } else {
+        this.passwordError = null
       }
     },
     goBack () {
