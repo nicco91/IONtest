@@ -10,10 +10,11 @@ npm install
 
 # serve with hot reload at localhost:8080
 npm run dev
+
+# Test user
+Username: iontest
+Password: 123456
 ```
 
-Test user
 
-Username: iontest
 
-Password: 123456
