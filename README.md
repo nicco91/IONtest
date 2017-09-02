@@ -5,6 +5,10 @@
 ## Build Setup
 
 ``` bash
+# you just need to have Node.js installed
+# change directory to project one
+cd @yourpath/IONtest
+
 # install dependencies
 npm install
 
