@@ -25,11 +25,11 @@ const actions = {
       window.setTimeout(() => {
         let user = findUser(username)
         if (!user) {
-          resolve({ success: false, errorMsg: 'Invalid username' })
+          resolve({ success: false, errorMsg: 'Username does not exists' })
           return
         }
         if (user.password !== password) {
-          resolve({ success: false, errorMsg: 'Invalid password' })
+          resolve({ success: false, errorMsg: 'Wrong password for this username' })
           return
         }
         commit('logIn', user)
