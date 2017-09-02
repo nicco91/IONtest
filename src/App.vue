@@ -3,7 +3,7 @@
     <nav class="navbar container">
       <div class="navbar-brand">
         <span class="navbar-item">
-          <img src="http://bulma.io/images/bulma-logo.png" alt="ION test" width="112" height="28">
+          <img src="./assets/ion-logo.png" alt="ION test">
         </span>
 
         <div class="navbar-burger burger"
@@ -24,7 +24,7 @@
 
         <div class="navbar-end">
           <user-status></user-status>
-          <login-button @click.native="showBurger = false"></login-button>
+          <login-button @click.native="checkHideBurger()"></login-button>
         </div>
       </div>
     </nav>
@@ -48,6 +48,8 @@
 import LoginButton from './components/LoginButton'
 import UserStatus from './components/UserStatus'
 
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'app',
   components: {
@@ -57,6 +59,18 @@ export default {
   data () {
     return {
       showBurger: false
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'isLogged'
+    ])
+  },
+  methods: {
+    checkHideBurger () {
+      if (!this.isLogged) {
+        this.showBurger = false
+      }
     }
   }
 }
